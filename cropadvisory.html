@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title data-i18n="title">Crop Advisory</title>
+    <link rel="icon" href="logo.png" type="image/png">
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+<header class="site-header">
+    <div class="logo">AgroSetu</div>
+
+    <button class="hamburger" onclick="toggleMenu()">☰</button>
+
+    <nav id="navbar">
+        <a href="index.html" data-i18n="nav_home">Home</a>
+        <a href="cropadvisory.html" data-i18n="nav_crop">Crop Advisory</a>
+        <a href="weather.html" data-i18n="nav_weather">Weather</a>
+        <!-- <a href="irrigation.html" data-i18n="nav_irrigation">Irrigation Tips</a> -->
+         <a href="assistant.html" data-i18n="nav_assistant">AI - Assistant</a>
+        <a href="schemes.html" data-i18n="nav_schemes">Govt Schemes</a>
+        <a href="languages.html" data-i18n="nav_language">Language</a>
+    </nav>
+</header>
+
+<div style="display:flex; justify-content:flex-end; padding:8px 16px;">
+    <button id="themeToggle"
+        style="background:var(--accent); border:none; border-radius:50%; width:40px; height:40px;
+        display:flex; align-items:center; justify-content:center; font-size:20px; cursor:pointer;
+        box-shadow:0 4px 12px rgba(0,0,0,0.2);">
+        🌙
+    </button>
+</div>
+
+<div class="section fade-in">
+    <h2 data-i18n="region_title">Recommended Crops for Your Region</h2>
+    <p data-i18n="region_desc">
+        Select your region to receive crop recommendations based on seasonal patterns, soil suitability, and rainfall trends.
+    </p>
+
+    <div style="margin-top:20px;">
+        <label style="font-size:18px;" data-i18n="choose_region">Choose Region:</label>
+        <select>
+            <option data-i18n="north">North Region</option>
+            <option data-i18n="south">South Region</option>
+            <option data-i18n="east">East Region</option>
+            <option data-i18n="west">West Region</option>
+            <option data-i18n="central">Central Region</option>
+        </select>
+    </div>
+</div>
+
+<div class="section fade-in">
+    <h2 data-i18n="seasonal_title">Popular Seasonal Crops</h2>
+
+    <div class="cards">
+        <div class="card">
+            <img src="https://i.imgur.com/Ny69t7p.jpeg" />
+            <p data-i18n="crop_wheat">Wheat</p>
+        </div>
+        <div class="card">
+            <img src="https://i.imgur.com/fUGR6nJ.jpeg" />
+            <p data-i18n="crop_rice">Rice</p>
+        </div>
+        <div class="card">
+            <img src="https://i.imgur.com/5klJpfJ.jpeg" />
+            <p data-i18n="crop_soybean">Soybean</p>
+        </div>
+        <div class="card">
+            <img src="https://i.imgur.com/BR2q3YL.jpeg" />
+            <p data-i18n="crop_sugarcane">Sugarcane</p>
+        </div>
+    </div>
+</div>
+
+<footer class="fade-in"
+    style="background:var(--accent); color:white; padding:20px; margin:20px auto;
+    max-width:1100px; box-shadow:0 6px 20px var(--shadow);"
+    data-i18n="footer">
+    © 2025 AgroSetu | Crop Advisory Module
+</footer>
+
+<script>
+/* ========== NAV SCROLL ========== */
+let lastScroll = 0;
+const nav = document.querySelector("nav");
+
+window.addEventListener("scroll", () => {
+    const current = window.scrollY;
+    if (current > lastScroll && current > 50) nav.classList.add("nav-small");
+    else nav.classList.remove("nav-small");
+    lastScroll = current;
+});
+
+/* ========== THEME ========== */
+const themeBtn = document.getElementById("themeToggle");
+const mobileNav = document.getElementById("navbar");
+
+themeBtn.onclick = () => {
+    const t = document.body.dataset.theme === "dark" ? "light" : "dark";
+    document.body.dataset.theme = t;
+    themeBtn.textContent = t === "dark" ? "☀️" : "🌙";
+    localStorage.setItem("theme", t);
+};
+
+function toggleMenu() {
+    mobileNav.classList.toggle("open");
+    themeBtn.style.display = mobileNav.classList.contains("open") ? "none" : "block";
+}
+
+const savedTheme = localStorage.getItem("theme");
+if (savedTheme) {
+    document.body.dataset.theme = savedTheme;
+    themeBtn.textContent = savedTheme === "dark" ? "☀️" : "🌙";
+}
+
+/* ========== LANGUAGE ========== */
+const translations = {
+    en: {
+        title: "Crop Advisory",
+        nav_home: "Home",
+        nav_crop: "Crop Advisory",
+        nav_weather: "Weather",
+        nav_irrigation: "Irrigation Tips",
+        nav_assistant: "AI - Assistant",
+        nav_schemes: "Govt Schemes",
+        nav_language: "Language",
+        region_title: "Recommended Crops for Your Region",
+        region_desc: "Select your region to receive crop recommendations based on seasonal patterns, soil suitability, and rainfall trends.",
+        choose_region: "Choose Region:",
+        north: "North Region",
+        south: "South Region",
+        east: "East Region",
+        west: "West Region",
+        central: "Central Region",
+        seasonal_title: "Popular Seasonal Crops",
+        crop_wheat: "Wheat",
+        crop_rice: "Rice",
+        crop_soybean: "Soybean",
+        crop_sugarcane: "Sugarcane",
+        footer: "© 2025 AgroSetu | Crop Advisory Module"
+    },
+    hi: {
+        title: "फसल सलाह",
+        nav_home: "होम",
+        nav_crop: "फसल सलाह",
+        nav_weather: "मौसम",
+        nav_irrigation: "सिंचाई सुझाव",
+        nav_assistant: "कृत्रिम बुद्धिमत्ता सहाय्यक",
+        nav_schemes: "सरकारी योजनाएँ",
+        nav_language: "भाषा",
+        region_title: "आपके क्षेत्र के लिए अनुशंसित फसलें",
+        region_desc: "मौसम, मिट्टी और वर्षा के आधार पर उपयुक्त फसल सुझाव प्राप्त करें।",
+        choose_region: "क्षेत्र चुनें:",
+        north: "उत्तर क्षेत्र",
+        south: "दक्षिण क्षेत्र",
+        east: "पूर्व क्षेत्र",
+        west: "पश्चिम क्षेत्र",
+        central: "मध्य क्षेत्र",
+        seasonal_title: "लोकप्रिय मौसमी फसलें",
+        crop_wheat: "गेहूं",
+        crop_rice: "चावल",
+        crop_soybean: "सोयाबीन",
+        crop_sugarcane: "गन्ना",
+        footer: "© 2025 एग्रोसेतु | फसल सलाह मॉड्यूल"
+    },
+    mr: {
+        title: "पीक सल्ला",
+        nav_home: "मुख्यपृष्ठ",
+        nav_crop: "पीक सल्ला",
+        nav_weather: "हवामान",
+        nav_irrigation: "सिंचन टिप्स",
+        nav_assistant: "कृत्रिम बुद्धिमत्ता सहाय्यक",
+        nav_schemes: "शासकीय योजना",
+        nav_language: "भाषा",
+        region_title: "तुमच्या भागासाठी शिफारस केलेली पिके",
+        region_desc: "हंगाम, माती व पावसाच्या आधारे योग्य पिकांची माहिती मिळवा.",
+        choose_region: "प्रदेश निवडा:",
+        north: "उत्तर प्रदेश",
+        south: "दक्षिण प्रदेश",
+        east: "पूर्व प्रदेश",
+        west: "पश्चिम प्रदेश",
+        central: "मध्य प्रदेश",
+        seasonal_title: "लोकप्रिय हंगामी पिके",
+        crop_wheat: "गहू",
+        crop_rice: "भात",
+        crop_soybean: "सोयाबीन",
+        crop_sugarcane: "ऊस",
+        footer: "© 2025 अ‍ॅग्रोसेतू | पीक सल्ला विभाग"
+    }
+};
+
+function applyLanguage(lang) {
+    document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.dataset.i18n;
+        if (translations[lang][key]) el.innerText = translations[lang][key];
+    });
+}
+
+applyLanguage(localStorage.getItem("language") || "en");
+</script>
+
+</body>
+</html>

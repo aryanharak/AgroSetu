@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title data-i18n="title">Government Schemes</title>
+    <link rel="icon" href="logo.png" type="image/png" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="logo" data-i18n="logo">AgroSetu</div>
+
+        <button class="hamburger" onclick="toggleMenu()">☰</button>
+
+        <nav id="navbar">
+            <a href="index.html" data-i18n="navhome">Home</a>
+
+            <a href="weather.html" data-i18n="navweather">Weather</a>
+
+            <a href="assistant.html" data-i18n="navassistant">AI - Assistant</a>
+            <a href="schemes.html" data-i18n="navschemes">Govt Schemes</a>
+            <a href="languages.html" data-i18n="navlanguage">Language</a>
+        </nav>
+    </header>
+
+
+    <div style="display:flex; justify-content:flex-end; padding:8px 16px;">
+        <button id="themeToggle" style="background:var(--accent); border:none; border-radius:50%; width:40px; height:40px;
+            display:flex; align-items:center; justify-content:center; font-size:20px; cursor:pointer;">
+            🌙
+        </button>
+    </div>
+
+    <div class="section fade-in">
+        <h2 data-i18n="statetitle">State Government Schemes</h2>
+        <p data-i18n="statedesc">
+            Choose your state to view relevant schemes for farmers.
+        </p>
+
+        <div class="form-group">
+            <label class="form-label" data-i18n="selectstate">Select State:</label>
+            <select class="input-field" id="stateSelect">
+                <option value="mh" data-i18n="statemh">Maharashtra</option>
+                <option value="gj" data-i18n="stategj">Gujarat</option>
+                <option value="ka" data-i18n="stateka">Karnataka</option>
+            </select>
+        </div>
+    </div>
+
+
+    <div class="section fade-in">
+        <h2 data-i18n="stateschemesheading">TOP SCHEMES</h2>
+        <div id="stateSchemes" class="cards" style="margin-top: 18px;"></div>
+    </div>
+
+
+    <footer class="fade-in" style="background:var(--accent); color:white; padding:20px; margin:20px auto;
+        max-width:1100px; box-shadow:0 6px 20px var(--shadow);" data-i18n="footer">
+        © 2025 AgroSetu Government Schemes Module
+    </footer>
+
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+
+    <script>
+
+        let lastScroll = 0;
+        const nav = document.querySelector("nav");
+
+        window.addEventListener("scroll", () => {
+            const current = window.scrollY;
+            if (current > lastScroll && current > 50) nav.classList.add("nav-small");
+            else nav.classList.remove("nav-small");
+            lastScroll = current;
+        });
+
+        const themeBtn = document.getElementById("themeToggle");
+        const mobileNav = document.getElementById("navbar");
+
+        themeBtn.onclick = () => {
+            const theme = document.body.dataset.theme === "dark" ? "light" : "dark";
+            document.body.dataset.theme = theme;
+            themeBtn.textContent = theme === "dark" ? "☀️" : "🌙";
+            localStorage.setItem("theme", theme);
+        };
+
+        function toggleMenu() {
+            mobileNav.classList.toggle("open");
+            themeBtn.style.display = mobileNav.classList.contains("open") ? "none" : "block";
+        }
+
+        const savedTheme = localStorage.getItem("theme");
+        if (savedTheme) {
+            document.body.dataset.theme = savedTheme;
+            themeBtn.textContent = savedTheme === "dark" ? "☀️" : "🌙";
+        }
+
+
+        const stateSchemesData = {
+            mh: [
+                {
+                    img: "pm-kisan.jpg",
+                    alt: "PM Kisan",
+                    i18nKey: "schemepmkisan",
+                    fallback: "PM Kisan Samman Nidhi",
+                    href: "https://pmkisan.gov.in/"
+                },
+                {
+                    img: "vish.png",
+                    alt: "PM Vishwakarma",
+                    i18nKey: "schemevish",
+                    fallback: "PM Vishwakarma",
+                    href: "https://pmvishwakarma.gov.in/"
+                },
+                {
+                    img: "PMJAY logo.jpg",
+                    alt: "MJPJAY",
+                    i18nKey: "schememjpjay",
+                    fallback: "MJPJAY",
+                    href: "https://www.jeevandayee.gov.in/"
+                },
+                {
+                    img: "images.jpg",
+                    alt: "Paramparagat Krishi Vikas Yojana",
+                    i18nKey: "pkvy",
+                    fallback: "Paramparagat Krishi Vikas Yojana",
+                    href: "https://pgsindia-ncof.gov.in/"
+                },
+                {
+                    img: "kusum.png",
+                    alt: "PMKUSUM",
+                    i18nKey: "kusum",
+                    fallback: "Pradhan Mantri Kisan Urja Suraksha evam Utthaan Mahabhiyaan",
+                    href: "https://pmkusum.mnre.gov.in/"
+                },
+                {
+                    img: "pmfby.png",
+                    alt: "PM-FBY",
+                    i18nKey: "pmfby",
+                    fallback: "PM - FBY",
+                    href: "https://pmfby.gov.in/"
+                },
+                {
+                    img: "SMAM.jpg",
+                    alt: "SMAM",
+                    i18nKey: "smam",
+                    fallback: "Agricultural Machinery Scheme",
+                    href: "https://agrimachinery.nic.in/"
+                },
+                {
+                    img: "soil.png",
+                    alt: "SOIL-HEALTH",
+                    i18nKey: "soil",
+                    fallback: "Soil - Health Card",
+                    href: "https://www.soilhealth.dac.gov.in/home"
+                }
+            ],
+            ka: [
+                {
+                    img: "karlogo.png",
+                    alt: "KA Scheme 1",
+                    i18nKey: "kaka1",
+                    fallback: "Udyogini Scheme",
+                    href: "https://udyogini.org/?gad_source=1&gad_campaignid=15425539919&gbraid=0AAAAAoQycMha-GapfCysOFZ28S5PMLSPQ&gclid=Cj0KCQiApL7KBhC7ARIsAD2Xq3B_MWNmIZbMp20X4W9mvhA_eKrqItglTbG_A3V3bJHC7-TMeXx0390aAnW4EALw_wcB"
+                },
+                {
+                    img: "karlogo.png",
+                    alt: "KA Scheme 2",
+                    i18nKey: "kaka2",
+                    fallback: "Airavata Scheme",
+                    href: "https://web.umang.gov.in/landing/scheme/detail/airavata-scheme_airavata.html"
+                },
+                {
+                    img: "karlogo.png",
+                    alt: "KA Scheme 3",
+                    i18nKey: "kaka3",
+                    fallback: "Manaswini Scheme",
+                    href: "https://dssp.karnataka.gov.in/dssp/Manaswini.aspx"
+                }
+            ],
+            gj: [
+                {
+                    img: "gujarat.jpg",
+                    alt: "GJ Scheme 1",
+                    i18nKey: "gj1",
+                    fallback: "Sardar Patel Sahbhagi Jalsanchay Yojana",
+                    href: "https://guj-nwrws.gujarat.gov.in/showpage.aspx?contentid=1557&lang=english"
+                },
+                {
+                    img: "gujarat.jpg",
+                    alt: "GJ Scheme 2",
+                    i18nKey: "gj2",
+                    fallback: "Vahli Dikri Yojana",
+                    href: "https://junagadh.nic.in/form/vhali-dikri-yojna-form/"
+                },
+                {
+                    img: "gujarat.jpg",
+                    alt: "GJ Scheme 3",
+                    i18nKey: "gj3",
+                    fallback: "Namo Laxmi Yojana",
+                    href: "https://web.convegenius.ai/bots?botId=0210067668891649"
+                }
+            ]
+
+        };
+
+        function renderStateSchemes(stateCode) {
+            const container = $("#stateSchemes");
+            container.empty();
+
+            const schemes = stateSchemesData[stateCode] || [];
+            if (!schemes.length) {
+                container.append('<p style="color: var(--muted);" data-i18n="comingsoon">Coming soon for this state.</p>');
+
+                const currentLang = localStorage.getItem("language") || "en";
+                applyLanguage(currentLang);
+                return;
+            }
+
+            schemes.forEach(s => {
+                const cardHtml = `
+                    <a href="${s.href}" target="_blank" style="text-decoration:none;">
+                        <div class="card">
+                            <img style="height: 168px;" src="${s.img}" alt="${s.alt}" />
+                            <p data-i18n="${s.i18nKey}">${s.fallback}</p>
+                        </div>
+                    </a>
+                `;
+                container.append(cardHtml);
+            });
+
+            const currentLang = localStorage.getItem("language") || "en";
+            applyLanguage(currentLang);
+        }
+
+        $(document).ready(function () {
+            const initialState = $("#stateSelect").val() || "mh";
+            renderStateSchemes(initialState);
+
+            $("#stateSelect").on("change", function () {
+                renderStateSchemes(this.value);
+            });
+        });
+
+
+        const translations = {
+            en: {
+                title: "Government Schemes",
+                logo: "AgroSetu",
+                navhome: "Home",
+                navcrop: "Crop Advisory",
+                navweather: "Weather",
+                navirrigation: "Irrigation Tips",
+                navassistant: "AI - Assistant",
+                navschemes: "Govt Schemes",
+                navlanguage: "Language",
+
+                centraltitle: "Central Government Schemes",
+                schemepmkisan: "PM Kisan Samman Nidhi",
+                schemevish: "PM Vishwakarma",
+                schememjpjay: "MJPJAY",
+                pkvy: "Paramparagat Krishi Vikas Yojana",
+                kusum: "Pradhan Mantri Kisan Urja Suraksha evam Utthaan Mahabhiyaan",
+                pmfby: "PM - FBY",
+                smam: "Agricultural Machinery Scheme",
+                soil: "Soil - Health Card",
+
+                statetitle: "State Government Schemes",
+                statedesc: "Choose your state to view relevant schemes for farmers.",
+                selectstate: "Select State:",
+
+                stateschemesheading: "TOP SCHEMES",
+                comingsoon: "Coming soon for this state.",
+
+                statemh: "Maharashtra",
+                stateka: "Karnataka",
+                stategj: "Gujarat",
+                statemp: "Madhya Pradesh",
+                statepb: "Punjab",
+
+                kaka1: "Udyogini Scheme",
+                kaka2: "Airavata Scheme",
+                kaka3: "Manaswini Scheme",
+                gj1: "Sardar Patel Sahbhagi Jalsanchay Yojana",
+                gj2: "Vahli Dikri Yojana",
+                gj3: "Namo Laxmi Yojana",
+
+                footer: "© 2025 AgroSetu Government Schemes Module"
+            },
+            hi: {
+                title: "सरकारी योजनाएँ",
+                logo: "एग्रोसेतु",
+                navhome: "होम",
+                navcrop: "फसल सलाह",
+                navweather: "मौसम",
+                navirrigation: "सिंचाई सुझाव",
+                navassistant: "कृत्रिम बुद्धिमत्ता सहाय्यक",
+                navschemes: "सरकारी योजनाएँ",
+                navlanguage: "भाषा",
+
+                centraltitle: "केंद्र सरकार की योजनाएँ",
+                schemepmkisan: "पीएम किसान सम्मान निधि",
+                schemevish: "पीएम विश्वकर्मा",
+                schememjpjay: "महात्मा ज्योतिबा फुले जन आरोग्य योजना",
+                pkvy: "परंपरागत कृषी विकास योजना ",
+                kusum: "प्रधानमंत्री किसान ऊर्जा सुरक्षा एवं उत्थान महाभियान ",
+                pmfby: "प्रधानमंत्री फसल बीमा योजना",
+                smam: "कृषि मशीनीकरण उप-मिशन ",
+                soil: "मृदा आरोग्य कार्ड",
+
+                statetitle: "राज्य सरकार की योजनाएँ",
+                statedesc: "किसानों के लिए योजनाएँ देखने हेतु राज्य चुनें।",
+                selectstate: "राज्य चुनें:",
+
+                stateschemesheading: "चयनित राज्य की योजनाएँ",
+                comingsoon: "इस राज्य के लिए योजनाएँ जल्द ही जोड़ी जाएँगी।",
+
+                statemh: "महाराष्ट्र",
+                stateka: "कर्नाटक",
+                stategj: "गुजरात",
+                statemp: "मध्य प्रदेश",
+                statepb: "पंजाब",
+
+                kaka1: "कर्नाटक योजना 1",
+                kaka2: "कर्नाटक योजना 2",
+                kaka3: "कर्नाटक योजना 3",
+                gj1: "गुजरात योजना 1",
+                gj2: "गुजरात योजना 2",
+                gj3: "गुजरात योजना 3",
+
+                footer: "© 2025 एग्रोसेतु सरकारी योजनाएँ मॉड्यूल"
+            },
+            mr: {
+                title: "शासकीय योजना",
+                logo: "अॅग्रोसेतु",
+                navhome: "मुख्यपृष्ठ",
+                navcrop: "पीक सल्ला",
+                navweather: "हवामान",
+                navirrigation: "सिंचन टिप्स",
+                navassistant: "कृत्रिम बुद्धिमत्ता सहाय्यक",
+                navschemes: "शासकीय योजना",
+                navlanguage: "भाषा",
+
+                centraltitle: "केंद्र सरकारच्या योजना",
+                schemepmkisan: "पीएम किसान सन्मान निधी",
+                schemevish: "पीएम विश्वकर्मा",
+                schememjpjay: "महात्मा ज्योतिबा फुले जन आरोग्य योजना",
+                pkvy: "परंपरागत कृषी विकास योजना ",
+                kusum: "प्रधानमंत्री किसान ऊर्जा सुरक्षा एवं उत्थान महाभियान ",
+                pmfby: "प्रधानमंत्री फसल बीमा योजना",
+                smam: "कृषि मशीनीकरण उप-मिशन ",
+                soil: "मृदा आरोग्य कार्ड",
+
+                statetitle: "राज्य सरकारच्या योजना",
+                statedesc: "शेतकऱ्यांसाठी योजना पाहण्यासाठी राज्य निवडा.",
+                selectstate: "राज्य निवडा:",
+
+                stateschemesheading: "निवडलेल्या राज्याच्या योजना",
+                comingsoon: "या राज्यासाठी योजना लवकरच जोडल्या जातील.",
+
+                statemh: "महाराष्ट्र",
+                stateka: "कर्नाटक",
+                stategj: "गुजरात",
+                statemp: "मध्य प्रदेश",
+                statepb: "पंजाब",
+
+                kaka1: "कर्नाटक योजना 1",
+                kaka2: "कर्नाटक योजना 2",
+                kaka3: "कर्नाटक योजना 3",
+                gj1: "गुजरात योजना 1",
+                gj2: "गुजरात योजना 2",
+                gj3: "गुजरात योजना 3",
+
+                footer: "© 2025 अॅग्रोसेतु शासकीय योजना विभाग"
+            }
+        };
+
+        function applyLanguage(lang) {
+            document.querySelectorAll("[data-i18n]").forEach(el => {
+                const key = el.getAttribute("data-i18n");
+                if (translations[lang] && translations[lang][key]) {
+                    el.innerText = translations[lang][key];
+                }
+            });
+            if (translations[lang] && translations[lang].title) {
+                document.title = translations[lang].title;
+            }
+        }
+
+        function setLanguage(lang) {
+            localStorage.setItem("language", lang);
+            applyLanguage(lang);
+        }
+
+        applyLanguage(localStorage.getItem("language") || "en");
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title data-i18n="title">Weather Updates</title>
+    <link rel="icon" href="logo.png" type="image/png">
+
+    <script>
+        document.addEventListener('contextmenu', e => e.preventDefault());
+    </script>
+
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="logo">AgroSetu</div>
+
+        <button class="hamburger" onclick="toggleMenu()">☰</button>
+
+        <nav id="navbar">
+            <a href="index.html" data-i18n="nav_home">Home</a>
+            <a href="weather.html" data-i18n="nav_weather">Weather</a>
+            <a href="assistant.html" data-i18n="nav_assistant">AI - Assistant</a>
+            <a href="schemes.html" data-i18n="nav_schemes">Govt Schemes</a>
+            <a href="languages.html" data-i18n="nav_language">Language</a>
+        </nav>
+    </header>
+
+    <div style="display:flex; justify-content:flex-end; padding:8px 16px;">
+        <button id="themeToggle" style="background:var(--accent); border:none; border-radius:50%; width:40px; height:40px;
+        display:flex; align-items:center; justify-content:center; font-size:20px; cursor:pointer;">
+            🌙
+        </button>
+    </div>
+
+    <div class="section fade-in">
+        <h2 data-i18n="main_title">Current Weather Information</h2>
+        <p data-i18n="main_desc">
+            Check simple weather forecasts for better farming decisions. Temperature, rainfall, and humidity data are
+            displayed clearly.
+        </p>
+
+        <div
+            style="margin-top:20px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:center;">
+            <label class="form-label" data-i18n="enter_location">Enter Your Location:</label>
+            <input type="text" id="locationInput" class="input-field" placeholder="e.g. Pune" />
+            <button class="btn primary" onclick="getWeather()" data-i18n="get_weather">
+                Get Weather
+            </button>
+        </div>
+
+        <div id="errorMessage" style="color:red; text-align:center; margin-top:15px; display:none;"></div>
+        <div id="loadingMessage" style="text-align:center; margin-top:15px; display:none;" data-i18n="loading">
+            Loading weather data...
+        </div>
+
+        <div class="cards" style="margin-top:40px;">
+            <div class="card">
+                <p data-i18n="temp">Temperature</p>
+                <h3 id="temperature" style="color:var(--accent); margin-top:10px;">--°C</h3>
+            </div>
+            <div class="card">
+                <p data-i18n="rain">Rainfall</p>
+                <h3 id="rainfall" style="color:var(--accent); margin-top:10px;">-- mm</h3>
+            </div>
+            <div class="card">
+                <p data-i18n="humidity">Humidity</p>
+                <h3 id="humidity" style="color:var(--accent); margin-top:10px;">--%</h3>
+            </div>
+        </div>
+    </div>
+
+    <footer class="fade-in" style="background:var(--accent); color:white; padding:20px; margin:20px auto;
+    max-width:1100px; box-shadow:0 6px 20px var(--shadow);" data-i18n="footer">
+        © 2025 AgroSetu | Weather Module
+    </footer>
+
+    <script>
+
+        let API_KEY = null;
+
+        async function loadApiKey() {
+            try {
+                const res = await fetch('api_key.txt');
+                API_KEY = (await res.text()).trim();
+            } catch {
+                const err = document.getElementById('errorMessage');
+                err.textContent = 'Error loading API configuration.';
+                err.style.display = 'block';
+            }
+        }
+        loadApiKey();
+
+
+        let lastScroll = 0;
+        const nav = document.querySelector("nav");
+
+        window.addEventListener("scroll", () => {
+            const current = window.scrollY;
+            if (current > lastScroll && current > 50) nav.classList.add("nav-small");
+            else nav.classList.remove("nav-small");
+            lastScroll = current;
+        });
+
+
+        const themeBtn = document.getElementById("themeToggle");
+        const mobileNav = document.getElementById("navbar");
+
+        themeBtn.onclick = () => {
+            const t = document.body.dataset.theme === "dark" ? "light" : "dark";
+            document.body.dataset.theme = t;
+            themeBtn.textContent = t === "dark" ? "☀️" : "🌙";
+            localStorage.setItem("theme", t);
+        };
+
+        function toggleMenu() {
+            mobileNav.classList.toggle("open");
+            themeBtn.style.display = mobileNav.classList.contains("open") ? "none" : "block";
+        }
+
+        const savedTheme = localStorage.getItem("theme");
+        if (savedTheme) {
+            document.body.dataset.theme = savedTheme;
+            themeBtn.textContent = savedTheme === "dark" ? "☀️" : "🌙";
+        }
+
+
+        document.getElementById("locationInput").addEventListener("keypress", e => {
+            if (e.key === "Enter") getWeather();
+        });
+
+        async function getWeather() {
+            const loc = locationInput.value.trim();
+            const err = errorMessage;
+            const load = loadingMessage;
+
+            if (!API_KEY || !loc) {
+                err.textContent = "Please enter a valid location.";
+                err.style.display = "block";
+                return;
+            }
+
+            load.style.display = "block";
+            err.style.display = "none";
+
+            try {
+                const r = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(loc)}&appid=${API_KEY}&units=metric`);
+                if (!r.ok) throw new Error("Location not found.");
+                const d = await r.json();
+
+                temperature.textContent = `${Math.round(d.main.temp)}°C`;
+                humidity.textContent = `${d.main.humidity}%`;
+                rainfall.textContent = `${d.rain?.['1h'] || 0} mm`;
+            } catch (e) {
+                err.textContent = e.message;
+                err.style.display = "block";
+            } finally {
+                load.style.display = "none";
+            }
+        }
+
+
+        const translations = {
+            en: {
+                title: "Weather Updates",
+                nav_home: "Home",
+                nav_crop: "Crop Advisory",
+                nav_weather: "Weather",
+                nav_irrigation: "Irrigation Tips",
+                nav_assistant: "AI - Assistant",
+                nav_schemes: "Govt Schemes",
+                nav_language: "Language",
+                main_title: "Current Weather Information",
+                main_desc: "Check simple weather forecasts for better farming decisions. Temperature, rainfall, and humidity data are displayed clearly.",
+                enter_location: "Enter Your Location:",
+                get_weather: "Get Weather",
+                loading: "Loading weather data...",
+                temp: "Temperature",
+                rain: "Rainfall",
+                humidity: "Humidity",
+                footer: "© 2025 AgroSetu | Weather Module"
+            },
+            hi: {
+                title: "मौसम अपडेट",
+                nav_home: "होम",
+                nav_crop: "फसल सलाह",
+                nav_weather: "मौसम",
+                nav_irrigation: "सिंचाई सुझाव",
+                nav_assistant: "कृत्रिम बुद्धिमत्ता सहाय्यक",
+                nav_schemes: "सरकारी योजनाएँ",
+                nav_language: "भाषा",
+                main_title: "वर्तमान मौसम जानकारी",
+                main_desc: "बेहतर कृषि निर्णयों के लिए मौसम की जानकारी प्राप्त करें।",
+                enter_location: "स्थान दर्ज करें:",
+                get_weather: "मौसम देखें",
+                loading: "मौसम डेटा लोड हो रहा है...",
+                temp: "तापमान",
+                rain: "वर्षा",
+                humidity: "आर्द्रता",
+                footer: "© 2025 एग्रोसेतु | मौसम मॉड्यूल"
+            },
+            mr: {
+                title: "हवामान अपडेट",
+                nav_home: "मुख्यपृष्ठ",
+                nav_crop: "पीक सल्ला",
+                nav_weather: "हवामान",
+                nav_irrigation: "सिंचन टिप्स",
+                nav_assistant: "कृत्रिम बुद्धिमत्ता सहाय्यक",
+                nav_schemes: "शासकीय योजना",
+                nav_language: "भाषा",
+                main_title: "सध्याची हवामान माहिती",
+                main_desc: "शेतीसाठी योग्य निर्णय घेण्यासाठी हवामान माहिती मिळवा.",
+                enter_location: "स्थान प्रविष्ट करा:",
+                get_weather: "हवामान पहा",
+                loading: "हवामान डेटा लोड होत आहे...",
+                temp: "तापमान",
+                rain: "पर्जन्य",
+                humidity: "आर्द्रता",
+                footer: "© 2025 अ‍ॅग्रोसेतू | हवामान विभाग"
+            }
+        };
+
+        function applyLanguage(lang) {
+            document.querySelectorAll("[data-i18n]").forEach(el => {
+                const key = el.dataset.i18n;
+                if (translations[lang][key]) el.innerText = translations[lang][key];
+            });
+        }
+        applyLanguage(localStorage.getItem("language") || "en");
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /weather.html
+Disallow: /assistant.html
+Disallow: /api_key.txt
+Disallow: /.gitignore
